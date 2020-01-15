@@ -1,10 +1,11 @@
-from course import Course
 from parsing import parse_schedule_html_file, parse_html_period_row
+from period import PeriodError
 
 def main():
     print('Parsing document...')
 
     periods = []
+    skipped = 0
 
     tree = parse_schedule_html_file("data/202001.html")
     course_rows = tree.xpath('/html/body/div/div/center/descendant::table/tbody/tr')
@@ -16,10 +17,11 @@ def main():
         try:
             period = parse_html_period_row(tr)
             periods.append(period)
-        except:
+            print(period)
+        except (IndexError, PeriodError) as e:
             # Invalid row!
-            pass
+            skipped += 1
 
-    print(f'Done! Found {len(periods)} periods')
+    print(f'Done! Found {len(periods)} periods and skipped {skipped}')
 if __name__ == "__main__":
     main()
