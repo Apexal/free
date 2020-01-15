@@ -1,6 +1,8 @@
 class Period:
-    def __init__(self, ptype, days, start_time, end_time, location='TBD'):
-        self.start_time
+    def __init__(self, crn, course_title, ptype, days, start_time, end_time, location='TBD'):
+        self.crn = crn
+        self.course_title = course_title
+        self.start_time = start_time
         self.ptype = ptype
         self.days = days
         self.start_time = start_time
