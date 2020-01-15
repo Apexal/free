@@ -1,6 +1,5 @@
 from lxml import html
 from period import Period, PeriodError
-from datetime import datetime
 
 TIME_FORMAT = '%H:%M'
 
@@ -16,7 +15,36 @@ def parse_schedule_html_file(filename):
   '''
   with open(filename) as f:
     tree = html.fromstring(f.read())
-    return tree
+
+  periods = {}
+  skipped = 0
+
+  course_rows = tree.xpath('/html/body/div/div/center/descendant::table/tbody/tr')
+  crn = None
+  for tr in course_rows:
+      # Remove non period rows
+      if len(tr.xpath('th')) > 0:
+          continue
+      
+      # Get crn if exists
+      try:
+          crn = tr.xpath('td[1]')[0].text_content().strip().split()[0]
+      except:
+          pass
+      
+      # Attempt to parse the row as a Period, if an exception is thrown, the row must not be a valid period and is skipped
+      try:
+          period = parse_html_period_row(tr)
+
+          if not crn in periods:
+              periods[crn] = []
+          
+          periods[crn].append(period)
+      except (ValueError, IndexError, PeriodError) as e:
+          # Invalid row!
+          skipped += 1
+  
+  return periods, skipped
 
 def get_td_text(tr, index):
   '''

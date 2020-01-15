@@ -1,4 +1,4 @@
-from time import strftime
+from time import strftime, strptime
 
 class Course:
     def __init__(self, crn, summary, title):
