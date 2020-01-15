@@ -20,6 +20,14 @@ class Period:
         # TODO: calculate
         return -1
 
+    @property
+    def start_hour(self):
+        return int(self.start_time.split(':')[0])
+    
+    @property
+    def end_hour(self):
+        return int(self.start_time.split(':')[1])
+
     def __str__(self):
         return f'{self.ptype} period on days {self.days} at location {self.location} from {self.start_time} to {self.end_time}'
 
