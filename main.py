@@ -31,8 +31,9 @@ def main():
                 periods[crn] = []
             
             periods[crn].append(period)
-        except (IndexError, PeriodError):
+        except (ValueError, IndexError, PeriodError) as e:
             # Invalid row!
+            print(e)
             skipped += 1
 
     # Print results

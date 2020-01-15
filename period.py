@@ -1,3 +1,5 @@
+from time import strftime
+
 class Course:
     def __init__(self, crn, summary, title):
         self.crn = crn

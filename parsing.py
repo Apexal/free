@@ -1,5 +1,8 @@
 from lxml import html
 from period import Period, PeriodError
+from datetime import datetime
+
+TIME_FORMAT = '%H:%M'
 
 def parse_schedule_html_file(filename):
   '''
@@ -28,6 +31,19 @@ def get_td_text(tr, index):
   '''
   return tr.xpath(f'td[{index}]')[0].text_content().strip()
 
+def determine_times(start_time, end_time):
+  start_hours, start_minutes = [int(n) for n in start_time.split(':')]
+  end_hours, end_minutes = [int(n) for n in end_time.replace('AM', '').replace('PM', '').split(':')]
+
+  # Possible change in meridiem
+  if 'PM' in end_time:
+    if end_hours < 12:
+      end_hours += 12
+    if start_hours + 12 <= end_hours:
+      start_hours += 12
+
+  return f'{start_hours:02}:{start_minutes:02}', f'{end_hours:02}:{end_minutes:02}'
+
 def parse_html_period_row(tr):
   '''
   Creates a Period from a table row.
@@ -42,8 +58,10 @@ def parse_html_period_row(tr):
   if len(days) == 0:
     raise PeriodError("Period days are empty.")
 
-  start_time = get_td_text(tr, 7)
-  end_time = get_td_text(tr, 8)
+  # 9:00 or 10:00
+  # Convert from H:MM to HH:MM
+  start_time, end_time = determine_times(get_td_text(tr, 7), get_td_text(tr, 8))
+
   location = tr.xpath('td[10]')[0].text_content().strip()
 
   return Period(
