@@ -3,6 +3,14 @@ from period import Period, PeriodError
 
 TIME_FORMAT = '%H:%M'
 
+DAY_NUMS = {
+  'M': 1,
+  'T': 2,
+  'W': 3,
+  'R': 4,
+  'F': 5
+}
+
 def parse_schedule_html_file(filename):
   '''
   Read and parse a valid schedule HTML file from the registrar. 
@@ -25,20 +33,20 @@ def parse_schedule_html_file(filename):
       # Remove non period rows
       if len(tr.xpath('th')) > 0:
           continue
-      
+
       # Get crn if exists
       try:
           crn = tr.xpath('td[1]')[0].text_content().strip().split()[0]
       except:
           pass
-      
+
       # Attempt to parse the row as a Period, if an exception is thrown, the row must not be a valid period and is skipped
       try:
           period = parse_html_period_row(tr)
 
           if not crn in periods:
               periods[crn] = []
-          
+
           periods[crn].append(period)
       except (ValueError, IndexError, PeriodError) as e:
           # Invalid row!
@@ -82,7 +90,7 @@ def parse_html_period_row(tr):
     ptype = "???"
 
   # If days are empty, then we do not care about this period.
-  days = list(filter(lambda s: len(s) > 0 and s != " ", get_td_text(tr, 6)))
+  days = list(map(lambda s: DAY_NUMS[s], filter(lambda s: len(s) > 0 and s != " ", get_td_text(tr, 6))))
   if len(days) == 0:
     raise PeriodError("Period days are empty.")
 

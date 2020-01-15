@@ -1,6 +1,9 @@
 from parsing import parse_schedule_html_file, parse_html_period_row
 from period import PeriodError
 
+EARLIST_TIME = '08:00'
+LATEST_TIME = '19:00'
+
 def main():
     print('Parsing document...')
 
@@ -15,6 +18,10 @@ def main():
         print()
 
     print(f'Done! Found {len(periods)} courses and skipped {skipped}')
+
+    for day in range(1, 6):
+        print(f'Getting periods on day {day}')
+
 
 if __name__ == "__main__":
     main()
