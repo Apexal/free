@@ -1,4 +1,4 @@
 {
-  "python.pythonPath": "/home/frank/.local/share/virtualenvs/free-Scx2oTse/bin/python",
+  "python.pythonPath": "/usr/bin/python3",
   "python.linting.enabled": true
 }
