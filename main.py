@@ -8,6 +8,7 @@ def main():
     print('Parsing document...')
 
     crns = get_crns()
+    print(f'Searching for {len(crns)} CRNs...')
     periods = []
 
     tree = parse_schedule_html_file('data/202001.html')
