@@ -21,7 +21,7 @@ class Period:
     
     @property
     def end_hour(self):
-        return int(self.start_time.split(':')[1])
+        return int(self.end_time.split(':')[0])
 
     def __str__(self):
         return f'{self.crn} {self.course_summary} {self.ptype} period on days {self.days} at location {self.location} from {self.start_time} to {self.end_time}'
