@@ -1,6 +1,6 @@
 from time import strftime, strptime
 
-class Period:
+class Period():
     def __init__(self, crn, course_summary, ptype, days, start_time, end_time, location='TBD'):
         self.crn = crn
         self.course_summary = course_summary
@@ -28,6 +28,16 @@ class Period:
 
     def __repr__(self):
         return self.__str__()
+    
+    def as_fullcalendar_event(self):
+        return {
+            'id': self.crn,
+            'startTime': self.start_time,
+            'endTime': self.end_time,
+            'title': self.course_summary,
+            'daysOfWeek': self.days,
+            'rendering': 'background'
+        }
 
 class PeriodError(RuntimeError):
     def __init__(self, arg):
