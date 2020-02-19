@@ -27,36 +27,43 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"
     />
+    <style>
+      .fc-today {
+        background-color: inherit !important;
+      }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function() {
         // const crns = prompt("crns")
-        let crns = []
+        let crns = [];
 
         const calendarEl = document.getElementById("calendar");
         const calendar = new FullCalendar.Calendar(calendarEl, {
           plugins: ["dayGrid", "timeGrid"],
           defaultView: "timeGridWeek",
           events: async function() {
-            const response = await fetch("/events?crns=" + crns.join(','));
+            const response = await fetch("/events?crns=" + crns.join(","));
             const events = await response.json();
-            document.getElementById('course-list').innerHTML = events.map(event => `<li>${event.title}</li>`).join('\n')
-            return events
+            document.getElementById("course-list").innerHTML = events
+              .map(event => `<li>${event.title}</li>`)
+              .join("\n");
+            return events;
           },
           header: {
-              left: '',
+            left: "",
             center: "",
-            right: ''
+            right: ""
           },
           columnHeaderFormat: {
-            weekday: 'long' 
+            weekday: "long"
           },
           allDaySlot: false,
           minTime: "08:00:00",
           maxTime: "20:00:00",
-          height: '100%'
+          height: "100%"
         });
 
         calendar.render();
@@ -66,11 +73,18 @@
           .addEventListener("submit", function(event) {
             event.preventDefault();
 
-            const newCrns = document.getElementById("crns").value.trim().split(',').map(val => val.trim());
+            const newCrns = document
+              .getElementById("crns")
+              .value.trim()
+              .replace(/,/g, " ")
+              .replace(/\n/g, " ")
+              .split(" ")
+              .filter(val => !!val)
+              .map(val => val.trim());
 
             if (!newCrns) return;
-
             crns = newCrns;
+            console.log(crns);
             calendar.refetchEvents();
           });
       });
@@ -91,13 +105,13 @@
           <label class="label" for="crns">CRNs</label>
           <div class="field has-addons">
             <div class="control is-expanded">
-              <input
+              <textarea
                 class="input"
                 type="text"
                 id="crns"
                 placeholder="94997,95738,95191,..."
                 required
-              />
+              ></textarea>
             </div>
             <div class="control">
               <button class="button" type="submit" id="display">Display</button>
@@ -106,22 +120,30 @@
         </form>
         <hr />
         <div class="columns">
-            <div class="column is-2">
-                <div class="box">
-                    <h2 class="subtitle">Courses</h2>
-                    <ul id="course-list">
-                        <li class="has-text-grey">Add CRNs...</li>
-                    </ul>
-                </div>
+          <div class="column is-2">
+            <div class="box">
+              <h2 class="subtitle">Courses</h2>
+              <ul id="course-list">
+                <li class="has-text-grey">Add CRNs...</li>
+              </ul>
             </div>
-            <div class="column">
-                <div id="calendar"></div>
-            </div>
+          </div>
+          <div class="column">
+            <div id="calendar"></div>
+          </div>
         </div>
       </div>
     </section>
     <footer class="footer">
-        <p class="has-text-centered">Frank Matranga '22 | <a href="https://github.com/Apexal/free" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+      <p class="has-text-centered">
+        Frank Matranga '22 |
+        <a
+          href="https://github.com/Apexal/free"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </p>
     </footer>
   </body>
 </html>
