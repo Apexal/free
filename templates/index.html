@@ -31,6 +31,18 @@
       .fc-today {
         background-color: inherit !important;
       }
+      .fc-time-grid .fc-slats td {
+        height: 4em;
+        border-bottom: 0;
+      }
+
+      textarea {
+        min-height: 100px;
+        max-height: 200px;
+        max-width: 100%;
+        min-width: 100%;
+        width: 100%;
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js"></script>
@@ -40,16 +52,27 @@
         // const crns = prompt("crns")
         let crns = [];
 
+        if (localStorage.getItem('crns') !== null) {
+          try {
+            crns = localStorage.getItem('crns').split(',')
+            document.getElementById('crns').value = crns.join(',')
+          } catch (e) {
+            localStorage.removeItem('crns')
+          }
+        }
+
         const calendarEl = document.getElementById("calendar");
         const calendar = new FullCalendar.Calendar(calendarEl, {
           plugins: ["dayGrid", "timeGrid"],
           defaultView: "timeGridWeek",
           events: async function() {
+            document.getElementById("display").classList.add("is-loading");
             const response = await fetch("/events?crns=" + crns.join(","));
             const events = await response.json();
             document.getElementById("course-list").innerHTML = events
               .map(event => `<li>${event.title}</li>`)
               .join("\n");
+            document.getElementById("display").classList.remove("is-loading");
             return events;
           },
           header: {
@@ -60,6 +83,7 @@
           columnHeaderFormat: {
             weekday: "long"
           },
+          slotDuration: "01:00:00",
           allDaySlot: false,
           minTime: "08:00:00",
           maxTime: "20:00:00",
@@ -83,8 +107,11 @@
               .map(val => val.trim());
 
             if (!newCrns) return;
+
             crns = newCrns;
-            console.log(crns);
+            
+            localStorage.setItem('crns', crns.join(','))
+
             calendar.refetchEvents();
           });
       });

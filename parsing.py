@@ -122,3 +122,12 @@ def parse_html_period_row(tr, crn):
         end_time,
         location
     )
+
+def get_periods(term_code, crns):
+
+    print(f'Searching for {len(crns)} CRNs...')
+    
+    periods, _ = parse_schedule_html_file(f'data/{term_code}.html', crns)
+    print(f'Done! Found {len(periods)} periods')
+
+    return periods

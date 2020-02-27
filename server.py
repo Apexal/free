@@ -1,5 +1,5 @@
 from flask import Flask, escape, request, render_template
-from main import get_periods
+from parsing import get_periods
 import json
 
 app = Flask(__name__)
